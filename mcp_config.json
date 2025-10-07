@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "perplexity": {
+      "command": "/Users/ati/dev/simple-mcp-server/venv/bin/python",
+      "args": [
+        "/Users/ati/dev/simple-mcp-server/mcp_server.py"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "your_perplexity_api_key_here"
+      }
+    }
+  }
+}

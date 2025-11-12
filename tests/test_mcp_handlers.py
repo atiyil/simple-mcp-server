@@ -168,7 +168,7 @@ class TestMCPHandlers:
         resources = await handle_list_resources()
         
         assert len(resources) == 1
-        assert resources[0].uri == "perplexity://info"
+        assert str(resources[0].uri) == "perplexity://info"
         assert resources[0].name == "Perplexity Server Info"
         assert resources[0].mimeType == "text/plain"
 

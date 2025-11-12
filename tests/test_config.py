@@ -46,9 +46,11 @@ class TestConfig:
 
     def test_init_empty_api_key_from_env(self):
         """Test Config raises ValueError when environment variable is empty."""
-        with patch.dict(os.environ, {"PERPLEXITY_API_KEY": ""}):
-            with pytest.raises(ValueError, match="Perplexity API key is empty"):
-                Config()
+        # Empty string env var is treated as not set, so it tries to load from file
+        with patch.dict(os.environ, {"PERPLEXITY_API_KEY": ""}, clear=True):
+            with patch("builtins.open", side_effect=FileNotFoundError()):
+                with pytest.raises(ValueError, match="Perplexity API key not found"):
+                    Config()
 
     def test_init_empty_api_key_from_file(self):
         """Test Config raises ValueError when config file contains empty key."""

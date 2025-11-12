@@ -49,17 +49,17 @@ class TestPerplexityClient:
         
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.json.return_value = mock_response
-            mock_post.return_value.raise_for_status = MagicMock()
-            mock_client.post = mock_post
+            mock_response_obj = MagicMock()
+            mock_response_obj.json.return_value = mock_response
+            mock_response_obj.raise_for_status = MagicMock()
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             result = await client.query("Test question")
             
             assert result == mock_response
-            mock_post.assert_called_once()
-            call_kwargs = mock_post.call_args[1]
+            mock_client.post.assert_called_once()
+            call_kwargs = mock_client.post.call_args[1]
             assert call_kwargs["json"]["model"] == "sonar"
             assert call_kwargs["json"]["max_tokens"] == 1000
             assert call_kwargs["json"]["temperature"] == 0.7
@@ -74,10 +74,10 @@ class TestPerplexityClient:
         
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.json.return_value = mock_response
-            mock_post.return_value.raise_for_status = MagicMock()
-            mock_client.post = mock_post
+            mock_response_obj = MagicMock()
+            mock_response_obj.json.return_value = mock_response
+            mock_response_obj.raise_for_status = MagicMock()
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             result = await client.query(
@@ -89,7 +89,7 @@ class TestPerplexityClient:
             )
             
             assert result == mock_response
-            call_kwargs = mock_post.call_args[1]
+            call_kwargs = mock_client.post.call_args[1]
             assert call_kwargs["json"]["model"] == "sonar-pro"
             assert call_kwargs["json"]["max_tokens"] == 2000
             assert call_kwargs["json"]["temperature"] == 0.5
@@ -105,10 +105,10 @@ class TestPerplexityClient:
         
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.json.return_value = mock_response
-            mock_post.return_value.raise_for_status = MagicMock()
-            mock_client.post = mock_post
+            mock_response_obj = MagicMock()
+            mock_response_obj.json.return_value = mock_response
+            mock_response_obj.raise_for_status = MagicMock()
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             result = await client.query(
@@ -116,7 +116,7 @@ class TestPerplexityClient:
                 system_message="Be concise"
             )
             
-            call_kwargs = mock_post.call_args[1]
+            call_kwargs = mock_client.post.call_args[1]
             assert call_kwargs["json"]["messages"] == [
                 {"role": "system", "content": "Be concise"},
                 {"role": "user", "content": "Test"}
@@ -127,11 +127,11 @@ class TestPerplexityClient:
         """Test query method handles HTTP errors."""
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.raise_for_status.side_effect = httpx.HTTPStatusError(
+            mock_response_obj = MagicMock()
+            mock_response_obj.raise_for_status.side_effect = httpx.HTTPStatusError(
                 "Error", request=MagicMock(), response=MagicMock()
             )
-            mock_client.post = mock_post
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             with pytest.raises(httpx.HTTPStatusError):
@@ -208,15 +208,15 @@ class TestPerplexityClient:
         
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.json.return_value = mock_response
-            mock_post.return_value.raise_for_status = MagicMock()
-            mock_client.post = mock_post
+            mock_response_obj = MagicMock()
+            mock_response_obj.json.return_value = mock_response
+            mock_response_obj.raise_for_status = MagicMock()
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             await client.query("Test")
             
-            call_kwargs = mock_post.call_args[1]
+            call_kwargs = mock_client.post.call_args[1]
             assert call_kwargs["timeout"] == 30.0
 
     @pytest.mark.asyncio
@@ -226,13 +226,13 @@ class TestPerplexityClient:
         
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
-            mock_post = AsyncMock()
-            mock_post.return_value.json.return_value = mock_response
-            mock_post.return_value.raise_for_status = MagicMock()
-            mock_client.post = mock_post
+            mock_response_obj = MagicMock()
+            mock_response_obj.json.return_value = mock_response
+            mock_response_obj.raise_for_status = MagicMock()
+            mock_client.post = AsyncMock(return_value=mock_response_obj)
             mock_client_class.return_value.__aenter__.return_value = mock_client
             
             await client.query("Test")
             
-            call_args = mock_post.call_args[0]
+            call_args = mock_client.post.call_args[0]
             assert call_args[0] == "https://api.perplexity.ai/chat/completions"
